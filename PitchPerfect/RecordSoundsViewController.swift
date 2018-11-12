@@ -44,11 +44,21 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
             })
         }
     }
+    
+    func setAppIs(recording: Bool) -> Void {
+        if(recording){
+            recordingLabel.text = "Recording in Progress"
+            recordButton.isEnabled = false
+            stopRecordingButton.isEnabled = true
+        }else{
+            recordingLabel.text = "Tap to Record"
+            recordButton.isEnabled = true
+            stopRecordingButton.isEnabled = false
+        }
+    }
    
     @IBAction func recordAudio(_ sender: Any) {
-        recordingLabel.text = "Recording in Progress"
-        recordButton.isEnabled = false
-        stopRecordingButton.isEnabled = true
+        setAppIs(recording: true)
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,.userDomainMask, true)[0] as String
         let recordingName = "recordedVoice.wav"
@@ -57,6 +67,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         
         let session = AVAudioSession.sharedInstance()
         try! session.setCategory(.playAndRecord, mode: .spokenAudio, options: .defaultToSpeaker)
+        // Play from big speaker on device
         try! session.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
         try! session.setActive(true)
         
@@ -68,9 +79,8 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     }
     @IBAction func stopRecording(_ sender: Any) {
-        recordingLabel.text = "Tap to Record"
-        recordButton.isEnabled = true
-        stopRecordingButton.isEnabled = false
+        setAppIs(recording: false)
+
         audioRecorder.stop()
         let audioSession = AVAudioSession.sharedInstance()
         try! audioSession.setActive(false)
